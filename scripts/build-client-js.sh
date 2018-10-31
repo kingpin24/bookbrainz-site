@@ -9,6 +9,7 @@ cross-env BABEL_ENV="browser" browserify -t [babelify] \
 		entity/entity.js \
 		deletion.js \
 		index.js \
+		merge.js \
 		registrationDetails.js \
 		revision.js \
 		search.js \
@@ -21,6 +22,7 @@ cross-env BABEL_ENV="browser" browserify -t [babelify] \
 		-o ../../../static/js/entity/entity.js \
 		-o ../../../static/js/deletion.js \
 		-o ../../../static/js/index.js \
+		-o ../../../static/js/merge.js \
 		-o ../../../static/js/registrationDetails.js \
 		-o ../../../static/js/revision.js \
 		-o ../../../static/js/search.js \
@@ -34,6 +36,7 @@ cross-env BABEL_ENV="browser" browserify -t [babelify] \
 	uglifyjs -cm -- ../../../static/js/entity/entity.js	  | gzip --best > ../../../static/js/entity/entity.gz
 	uglifyjs -cm -- ../../../static/js/deletion.js 		  | gzip --best > ../../../static/js/deletion.js.gz
 	uglifyjs -cm -- ../../../static/js/index.js 		  | gzip --best > ../../../static/js/index.js.gz
+	uglifyjs -cm -- ../../../static/js/merge.js | gzip --best > ../../../static/js/merge.js.gz
 	uglifyjs -cm -- ../../../static/js/registrationDetails.js | gzip --best > ../../../static/js/registrationDetails.js.gz
 	uglifyjs -cm -- ../../../static/js/revision.js 		  | gzip --best > ../../../static/js/revision.js.gz
 	uglifyjs -cm -- ../../../static/js/search.js 		  | gzip --best > ../../../static/js/search.js.gz

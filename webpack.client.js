@@ -18,6 +18,7 @@ let config = {
 	entry: {
 		deletion: ['./controllers/deletion.js'],
 		index: ['./controllers/index.js'],
+		merge: ['./controllers/merge.js'],
 		registrationDetails: ['./controllers/registrationDetails.js'],
 		revision: ['./controllers/revision.js'],
 		search: ['./controllers/search.js'],
