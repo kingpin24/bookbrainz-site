@@ -18,7 +18,6 @@ let config = {
 	entry: {
 		deletion: ['./controllers/deletion.js'],
 		index: ['./controllers/index.js'],
-		merge: ['./controllers/merge.js'],
 		registrationDetails: ['./controllers/registrationDetails.js'],
 		revision: ['./controllers/revision.js'],
 		search: ['./controllers/search.js'],
@@ -27,7 +26,8 @@ let config = {
 		'editor/edit': ['./controllers/editor/edit.js'],
 		'editor/editor': ['./controllers/editor/editor.js'],
 		'entity/entity': ['./controllers/entity/entity.js'],
-		'entity-editor': ['./entity-editor/controller.js']
+		'entity-editor': ['./entity-editor/controller.js'],
+		'entity-merge': ['./entity-editor/controller-merge.js']
 	},
 	output: {
 		chunkFilename: production ? 'js/[name].[chunkhash].js' : 'js/[name].js',
