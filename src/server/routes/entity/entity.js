@@ -52,6 +52,7 @@ import _ from 'lodash';
 import config from '../../../common/helpers/config';
 import target from '../../templates/target';
 
+
 type PassportRequest = $Request & {user: any, session: any};
 
 const log = new Log(config.site.log);
@@ -267,8 +268,7 @@ export function handleDelete(
 		// Get the parents of the new revision
 		const revisionParentsPromise = newRevisionPromise
 			.then((revision) =>
-				revision.related('parents').fetch({transacting})
-			);
+				revision.related('parents').fetch({transacting}));
 
 		// Add the previous revision as a parent of this revision.
 		const parentAddedPromise =
@@ -555,11 +555,11 @@ async function getChangedProps(
 }
 
 function fetchOrCreateMainEntity(
-	orm, transacting, isNew, currentEntity, entityType
+	orm, transacting, isNew, bbid, entityType
 ) {
 	const model = utils.getEntityModelByType(orm, entityType);
 
-	const entity = model.forge({bbid: currentEntity.bbid});
+	const entity = model.forge({bbid});
 
 	if (isNew) {
 		return Promise.resolve(entity);
@@ -605,9 +605,9 @@ async function saveEntitiesAndFinishRevision(
 	orm, transacting, isNew: boolean, newRevision: any, mainEntity: any,
 	updatedEntities: [], editorID: number, note: string
 ) {
-	const parentRevisionIDs = _.compact(_.uniq(updatedEntities.map(
+	const parentRevisionIDs = _.compact(updatedEntities.map(
 		(entityModel) => entityModel.get('revisionId')
-	)));
+	));
 
 	const entitiesSavedPromise = Promise.all(
 		_.map(updatedEntities, (entityModel) => {
@@ -646,7 +646,7 @@ export function handleCreateOrEditEntity(
 	entityType: EntityTypeString,
 	derivedProps: {}
 ) {
-	const {orm}: {orm: any} = req.app.locals;
+	const {orm, mergingEntities}: {orm: any} = req.app.locals;
 	const {Entity, Revision, bookshelf} = orm;
 	const editorJSON = req.user;
 
@@ -708,7 +708,7 @@ export function handleCreateOrEditEntity(
 
 		// Fetch or create main entity
 		const mainEntity = await fetchOrCreateMainEntity(
-			orm, transacting, isNew, currentEntity, entityType
+			orm, transacting, isNew, currentEntity.bbid, entityType
 		);
 
 		// Fetch all entities that definitely exist
@@ -719,6 +719,19 @@ export function handleCreateOrEditEntity(
 		_.forOwn(changedProps, (value, key) => mainEntity.set(key, value));
 
 		const allEntities = [...otherEntities, mainEntity];
+
+		if (mergingEntities && mergingEntities.length) {
+			// fetch merged entities and add to allEntities
+			const entitiesToMerge = mergingEntities.filter(entity =>
+				entity.bbid !== currentEntity.bbid);
+			const mergedEntities = await Promise.all(
+				entitiesToMerge.map(entity => fetchOrCreateMainEntity(
+					orm, transacting, false, entity.bbid, entityType
+				))
+			);
+			allEntities.push(...mergedEntities);
+			// redirect other bbids to currentEntity.bbid
+		}
 
 		_.forEach(allEntities, (entityModel) => {
 			const bbid: string = entityModel.get('bbid');
@@ -731,7 +744,7 @@ export function handleCreateOrEditEntity(
 		});
 
 		const savedMainEntity = await saveEntitiesAndFinishRevision(
-			orm, transacting, isNew, newRevision, mainEntity, allEntities,
+			orm, transacting, isNew, newRevision, mainEntity, _.uniqWith(allEntities, 'id'),
 			editorJSON.id, body.note
 		);
 
