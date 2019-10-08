@@ -281,6 +281,7 @@ function editionToFormState(edition) {
 	};
 
 	const relationshipSection = {
+		canEdit: true,
 		lastRelationships: null,
 		relationshipEditorProps: null,
 		relationshipEditorVisible: false,

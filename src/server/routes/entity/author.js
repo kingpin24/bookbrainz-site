@@ -154,6 +154,7 @@ function authorToFormState(author) {
 	};
 
 	const relationshipSection = {
+		canEdit: true,
 		lastRelationships: null,
 		relationshipEditorProps: null,
 		relationshipEditorVisible: false,
