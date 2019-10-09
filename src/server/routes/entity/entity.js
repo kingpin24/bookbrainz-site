@@ -646,7 +646,6 @@ export function handleCreateOrEditEntity(
 ) {
 	const {orm}: {orm: any} = req.app.locals;
 	const {Entity, Revision, bookshelf} = orm;
-	const {mergingEntities}: {orm: any} = res.locals;
 	const editorJSON = req.user;
 
 	const {body}: {body: any} = req;
@@ -722,6 +721,7 @@ export function handleCreateOrEditEntity(
 
 			const allEntities = [...otherEntities, mainEntity];
 
+			const {mergingEntities} = body;
 			const isMergeOperation = Array.isArray(mergingEntities) && mergingEntities.length;
 			if (isMergeOperation) {
 				// eslint-disable-next-line no-console
