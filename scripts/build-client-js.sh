@@ -3,7 +3,6 @@
 pushd src/client/controllers
 cross-env BABEL_ENV="browser" browserify -t [babelify] \
 		../entity-editor/controller.js \
-		../entity-editor/controller-merge.js \
 		editor/edit.js \
 		editor/achievement.js \
 		editor/editor.js \
@@ -16,7 +15,6 @@ cross-env BABEL_ENV="browser" browserify -t [babelify] \
 		statistics.js \
 	-p [ factor-bundle \
 		-o ../../../static/js/entity-editor.js \
-		-o ../../../static/js/entity-merge.js \
 		-o ../../../static/js/editor/edit.js \
 		-o ../../../static/js/editor/achievement.js \
 		-o ../../../static/js/editor/editor.js \
@@ -30,7 +28,6 @@ cross-env BABEL_ENV="browser" browserify -t [babelify] \
 	] > ../../../static/js/bundle.js
 	
 	uglifyjs -cm -- ../../../static/js/entity-editor.js  	  | gzip --best > ../../../static/js/entity-editor.js.gz
-	uglifyjs -cm -- ../../../static/js/entity-merge.js  	  | gzip --best > ../../../static/js/entity-merge.js.gz
 	uglifyjs -cm -- ../../../static/js/editor/edit.js 	  | gzip --best > ../../../static/js/editor/edit.js.gz
 	uglifyjs -cm -- ../../../static/js/editor/achievement.js  | gzip --best > ../../../static/js/editor/achievement.js.gz
 	uglifyjs -cm -- ../../../static/js/editor/editor.js 	  | gzip --best > ../../../static/js/editor/editor.js.gz

@@ -1,4 +1,4 @@
-/* eslint import/no-commonjs: 0, 
+/* eslint import/no-commonjs: 0,
 	import/unambiguous: 0,
 	import/no-commonjs: 0
 */
@@ -26,8 +26,7 @@ let config = {
 		'editor/edit': ['./controllers/editor/edit.js'],
 		'editor/editor': ['./controllers/editor/editor.js'],
 		'entity/entity': ['./controllers/entity/entity.js'],
-		'entity-editor': ['./entity-editor/controller.js'],
-		'entity-merge': ['./entity-editor/controller-merge.js']
+		'entity-editor': ['./entity-editor/controller.js']
 	},
 	output: {
 		chunkFilename: production ? 'js/[name].[chunkhash].js' : 'js/[name].js',
