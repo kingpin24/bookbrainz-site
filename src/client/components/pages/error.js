@@ -76,7 +76,10 @@ function ErrorPage(props) {
 ErrorPage.displayName = 'ErrorPage';
 ErrorPage.propTypes = {
 	error: PropTypes.shape({
-		detailedMessage: PropTypes.string,
+		detailedMessage: PropTypes.oneOfType([
+			PropTypes.array,
+			PropTypes.string
+		]),
 		message: PropTypes.string,
 		status: PropTypes.number
 	}).isRequired
