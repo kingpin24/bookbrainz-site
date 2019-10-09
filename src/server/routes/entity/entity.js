@@ -157,7 +157,8 @@ export function displayEntity(req: PassportRequest, res: $Response) {
 				markup,
 				page: entityName,
 				props: escapeProps(props),
-				script: '/js/entity/entity.js'
+				script: '/js/entity/entity.js',
+				title: resLocals.title
 			}));
 		}
 		else {
