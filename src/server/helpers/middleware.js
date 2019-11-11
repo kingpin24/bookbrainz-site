@@ -81,6 +81,7 @@ export function loadEntityRelationships(req, res, next) {
 		.then(
 			() => RelationshipSet.forge({id: entity.relationshipSetId})
 				.fetch({
+					require: false,
 					withRelated: [
 						'relationships.source',
 						'relationships.target',
@@ -131,6 +132,10 @@ export function loadEntityRelationships(req, res, next) {
 }
 export async function redirectedBbid(req, res, next, bbid) {
 	const {orm} = req.app.locals;
+	if (!commonUtils.isValidBBID(bbid)) {
+		return next('route');
+	}
+
 	try {
 		const redirectBbid = await orm.func.entity.recursivelyGetRedirectBBID(orm, bbid);
 		if (redirectBbid !== bbid) {
