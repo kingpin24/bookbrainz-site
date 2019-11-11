@@ -19,6 +19,7 @@
 
 import * as bootstrap from 'react-bootstrap';
 import * as utilsHelper from '../../helpers/utils';
+import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -87,7 +88,17 @@ class EntityRevisions extends React.Component {
 				<small className="pull-right">
 					{`${revision.revision.author.name}, ${dateLabel}`}
 				</small>
-				{`r${revision.id}`}
+				{`#${revision.id}`}
+				{revision.isMerge ?
+					<small style={{marginLeft: '0.5em'}}>
+						–
+						<FontAwesome
+							flip="vertical" name="code-branch"
+							style={{margin: '0 0.5em'}} title="Merge revision"
+						/>
+						Merge
+					</small> :
+				 null}
 			</h4>
 		);
 

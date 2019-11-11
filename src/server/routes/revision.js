@@ -169,7 +169,8 @@ function diffRevisionsWithParents(entityRevisions) {
 				.then(
 					(parent) => Promise.props({
 						changes: revision.diff(parent),
-						entity: revision.related('entity')
+						entity: revision.related('entity'),
+						revision
 					})
 				)
 	));
