@@ -705,7 +705,7 @@ export function handleCreateOrEditEntity(
 				]);
 
 			// If there are no differences, bail
-			if (_.isEmpty(changedProps) && _.isEmpty(relationshipSets)) {
+			if (_.isEmpty(changedProps) && _.isEmpty(relationshipSets) && !isMergeOperation) {
 				throw new Error('Entity did not change');
 			}
 
@@ -763,7 +763,7 @@ export function handleCreateOrEditEntity(
 					// We only want to set isMerge to true on the entities we're merging
 					newEntityRevision
 						.query(qb => qb.whereIn('bbid', mergingEntititesBBIDs))
-						.save({isMerge: true}, {debug: true, patch: true, transacting});
+						.save({isMerge: true}, {patch: true, transacting});
 				});
 			}
 
