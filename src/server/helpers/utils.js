@@ -20,8 +20,8 @@
 
 // @flow
 
+import {kebabCase as _kebabCase, isNil} from 'lodash';
 import Promise from 'bluebird';
-import {kebabCase as _kebabCase} from 'lodash';
 
 /**
  * Returns an API path for interacting with the given Bookshelf entity model
@@ -218,4 +218,44 @@ export function getAdditionalRelations(modelType) {
 		return ['disambiguation', 'releaseEventSet.releaseEvents', 'identifierSet.identifiers.type', 'editionFormat'];
 	}
 	return [];
+}
+
+/**
+ * Determines whether an entity provided to the EntitySearch component is an
+ * Area, using the present attributes.
+ *
+ * @param {Object} entity the entity to test
+ * @returns {boolean} true if the entity looks like an Area
+ */
+function isArea(entity) {
+	if (entity.type === 'Area') {
+		return true;
+	}
+
+	if (entity.gid) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Transforms an entity to a react-select component option
+ * @param {object} entity - The entity to transfrom
+ * @returns {object} option - A react-select option
+ */
+export function entityToOption(entity) {
+	if (isNil(entity)) {
+		return null;
+	}
+	const id = isArea(entity) ? entity.id : entity.bbid;
+
+	return {
+		disambiguation: entity.disambiguation ?
+			entity.disambiguation.comment : null,
+		id,
+		text: entity.defaultAlias ?
+			entity.defaultAlias.name : '(unnamed)',
+		type: entity.type
+	};
 }

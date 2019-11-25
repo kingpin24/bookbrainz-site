@@ -87,18 +87,6 @@ router.get('/:bbid/revisions', (req, res, next) => {
 	entityRoutes.displayRevisions(req, res, next, WorkRevision);
 });
 
-function entityToOption(entity) {
-	return _.isNil(entity) ? null :
-		{
-			disambiguation: entity.disambiguation ?
-				entity.disambiguation.comment : null,
-			id: entity.bbid,
-			text: entity.defaultAlias ?
-				entity.defaultAlias.name : '(unnamed)',
-			type: entity.type
-		};
-}
-
 // Creation
 
 router.get(
@@ -117,14 +105,14 @@ router.get(
 			propsPromise.author =
 				Author.forge({bbid: req.query.author})
 					.fetch({withRelated: 'defaultAlias'})
-					.then((data) => entityToOption(data.toJSON()));
+					.then((data) => utils.entityToOption(data.toJSON()));
 		}
 
 		if (req.query.edition) {
 			propsPromise.edition =
 				Edition.forge({bbid: req.query.edition})
 					.fetch({withRelated: 'defaultAlias'})
-					.then((data) => entityToOption(data.toJSON()));
+					.then((data) => utils.entityToOption(data.toJSON()));
 		}
 
 		function render(props) {
