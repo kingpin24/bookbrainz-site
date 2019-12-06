@@ -193,7 +193,7 @@ router.get('/:id', async (req, res, next) => {
 			.where('id', req.params.id)
 			.fetchAll({merge: false, remove: false, require: false, withRelated: 'entity'})
 			.then(diffRevisionsWithParents)
-			.catch(error => { log.error(error); throw error; });
+			.catch(err => { log.error(err); throw err; });
 	}
 	try {
 		/*
@@ -266,8 +266,8 @@ router.get('/:id', async (req, res, next) => {
 			script
 		}));
 	 }
-	catch (error) {
-		return next(error);
+	catch (err) {
+		return next(err);
 	 }
 });
 
