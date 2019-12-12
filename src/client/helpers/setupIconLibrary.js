@@ -18,11 +18,11 @@
 
 import {config, library} from '@fortawesome/fontawesome-svg-core';
 import {
-	faBook, faCalendarAlt, faChartLine, faCircle, faCircleNotch,
+	faBook, faCalendarAlt, faChartLine, faCircle, faCircleNotch, faCodeBranch,
 	faComment, faEnvelope, faExclamationTriangle, faExternalLinkAlt,
 	faGlobe, faHistory, faInfo, faPenNib, faPencilAlt, faPencilRuler,
 	faPlus, faQuestionCircle, faRemoveFormat, faSearch, faSignInAlt,
-	faSignOutAlt, faSlash, faTimes, faTimesCircle, faTrashAlt,
+	faSignOutAlt, faSlash, faTasks, faTimes, faTimesCircle, faTrashAlt,
 	faUniversity, faUser, faUserCircle, faWindowRestore
 } from '@fortawesome/free-solid-svg-icons';
 import {fab} from '@fortawesome/free-brands-svg-icons';
@@ -33,10 +33,10 @@ config.autoAddCss = false;
 
 // Add Icons to FontAwesome library
 library.add(
-	fab, faBook, faCalendarAlt, faChartLine, faCircle, faCircleNotch,
+	fab, faBook, faCalendarAlt, faChartLine, faCircle, faCircleNotch, faCodeBranch,
 	faComment, faEnvelope, faExclamationTriangle, faExternalLinkAlt,
 	faGlobe, faHistory, faInfo, faPenNib, faPencilAlt, faPencilRuler,
 	faPlus, faQuestionCircle, faRemoveFormat, faSearch, faSignInAlt,
-	faSignOutAlt, faSlash, faTimes, faTimesCircle, faTrashAlt,
+	faSignOutAlt, faSlash, faTasks, faTimes, faTimesCircle, faTrashAlt,
 	faUniversity, faUser, faUserCircle, faWindowRestore
 );
