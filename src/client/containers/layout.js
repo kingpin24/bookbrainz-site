@@ -251,9 +251,11 @@ class Layout extends React.Component {
 						</div>
 					)}
 					{children}
-					<MergeQueue
-						mergeQueue={mergeQueue}
-					/>
+					{mergeQueue ?
+						<MergeQueue
+							mergeQueue={mergeQueue}
+						/> : null
+					}
 				</div>
 			);
 
@@ -290,7 +292,7 @@ Layout.propTypes = {
 	disableSignUp: PropTypes.bool,
 	hideSearch: PropTypes.bool,
 	homepage: PropTypes.bool,
-	mergeQueue: PropTypes.object.isRequired,
+	mergeQueue: PropTypes.object,
 	repositoryUrl: PropTypes.string.isRequired,
 	requiresJS: PropTypes.bool,
 	siteRevision: PropTypes.string.isRequired,
@@ -300,6 +302,7 @@ Layout.defaultProps = {
 	disableSignUp: false,
 	hideSearch: false,
 	homepage: false,
+	mergeQueue: null,
 	requiresJS: false,
 	user: null
 };
