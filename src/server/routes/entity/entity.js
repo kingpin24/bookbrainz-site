@@ -820,7 +820,6 @@ export function handleCreateOrEditEntity(
 					await newEntityRevision
 						.query(qb => qb.whereIn('bbid', mergingEntitiesBBIDs))
 						.save({isMerge: true}, {patch: true, transacting});
-					req.session.mergeQueue = null;
 					try {
 						/* Remove merged entities from search results */
 						await Promise.all(entitiesToMerge.map(search.deleteEntity));
@@ -852,17 +851,15 @@ export function handleCreateOrEditEntity(
 				withRelated: ['defaultAlias', 'aliasSet.aliases']
 			});
 
-			if (req.session.mergeQueue) {
-				req.session.mergeQueue.submitted = false;
+			// Clear the merge queue
+			if (req.session) {
+				req.session.mergeQueue = null;
 			}
 
 			return refreshedEntity.toJSON();
 		}
 		catch (error) {
 			log.error(error);
-			if (req.session.mergeQueue) {
-				req.session.mergeQueue.submitted = false;
-			}
 			throw error;
 		}
 	});
