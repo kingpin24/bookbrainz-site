@@ -415,6 +415,7 @@ function processEntitySets(
 	return Promise.resolve(null);
 }
 
+
 async function getNextAliasSet(orm, transacting, currentEntity, body) {
 	const {AliasSet} = orm;
 
@@ -503,7 +504,7 @@ async function getNextDisambiguation(orm, transacting, currentEntity, body) {
 
 async function getChangedProps(
 	orm, transacting, isNew, currentEntity, body, entityType,
-	newRevisionPromise, derivedProps
+	newRevision, derivedProps
 ) {
 	const aliasSetPromise =
 		getNextAliasSet(orm, transacting, currentEntity, body);
@@ -511,10 +512,8 @@ async function getChangedProps(
 	const identSetPromise =
 		getNextIdentifierSet(orm, transacting, currentEntity, body);
 
-	const annotationPromise = newRevisionPromise.then(
-		(revision) => getNextAnnotation(
-			orm, transacting, currentEntity, body, revision
-		)
+	const annotationPromise = getNextAnnotation(
+		orm, transacting, currentEntity, body, newRevision
 	);
 
 	const disambiguationPromise =
@@ -683,24 +682,19 @@ export function handleCreateOrEditEntity(
 			}
 
 			// Then, edit the entity
-			const newRevisionPromise = new Revision({
+			const newRevision = await new Revision({
 				authorId: editorJSON.id,
 				isMerge: isMergeOperation
 			}).save(null, {transacting});
 
-			const relationshipSetsPromise = getNextRelationshipSets(
+			const relationshipSets = await getNextRelationshipSets(
 				orm, transacting, currentEntity, body
 			);
 
-			const changedPropsPromise = getChangedProps(
+			const changedProps = await getChangedProps(
 				orm, transacting, isNew, currentEntity, body, entityType,
-				newRevisionPromise, derivedProps
+				newRevision, derivedProps
 			);
-
-			const [newRevision, changedProps, relationshipSets] =
-				await Promise.all([
-					newRevisionPromise, changedPropsPromise, relationshipSetsPromise
-				]);
 
 			// If there are no differences, bail
 			if (_.isEmpty(changedProps) && _.isEmpty(relationshipSets) && !isMergeOperation) {
@@ -852,7 +846,7 @@ export function handleCreateOrEditEntity(
 			});
 
 			// Clear the merge queue
-			if (req.session) {
+			if (_.get(req, 'session.mergeQueue')) {
 				req.session.mergeQueue = null;
 			}
 
