@@ -263,7 +263,6 @@ function transformNewForm(data) {
 		disambiguation: data.nameSection.disambiguation,
 		identifiers,
 		languages,
-		mergingEntities: data.mergingEntities,
 		note: data.submissionSection.note,
 		relationships,
 		typeId: data.workSection.type
