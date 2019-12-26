@@ -241,17 +241,21 @@ export function showEntityEditions(entity) {
 }
 
 export function getEntityLabel(entity) {
-	if (entity.defaultAlias) {
-		return `${entity.defaultAlias.name} `;
-	}
-
 	// Deleted entities
 	if (!entity.dataId) {
 		let deletedEntityName = `Deleted ${entity.type} ${entity.bbid}`;
-		if (entity.parentAlias) {
-			deletedEntityName = entity.parentAlias.name;
+		if (entity.defaultAlias) {
+			deletedEntityName = entity.defaultAlias.name;
 		}
 		return <span className="text-muted deleted" title={`Deleted ${entity.type}`}>{deletedEntityName}</span>;
+	}
+
+	if (entity.defaultAlias) {
+		return (
+			<span title={`${entity.type} ${entity.defaultAlias.name}`}>
+				{entity.defaultAlias.name}
+			</span>
+		);
 	}
 
 	return <span title={`Unnamed ${entity.type} ${entity.bbid}`}>(unnamed)</span>;

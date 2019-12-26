@@ -93,15 +93,16 @@ router.get('/', async (req, res, next) => {
 						entity.type,
 						entity.data_id,
 						alias.name AS default_alias_name,
-						parent_alias.name AS parent_alias_name,
 						revision.id AS revision_id,
-						revision.created_at AS created_at
+						revision.created_at AS created_at,
+						revision.is_merge AS is_merge
 					FROM bookbrainz.${SQLViewName} AS entity
 					JOIN bookbrainz.revision ON revision.id = entity.revision_id
-					LEFT JOIN bookbrainz.alias ON alias.id = entity.default_alias_id
-					LEFT JOIN bookbrainz.revision_parent ON revision_parent.child_id = entity.revision_id AND entity.default_alias_id IS NULL
-					LEFT JOIN bookbrainz.${SQLViewName} AS parent ON parent.revision_id = revision_parent.parent_id AND entity.default_alias_id IS NULL
-					LEFT JOIN bookbrainz.alias as parent_alias ON parent_alias.id = parent.default_alias_id AND entity.default_alias_id IS NULL
+					LEFT JOIN bookbrainz.revision_parent ON revision_parent.child_id = entity.revision_id
+					RIGHT JOIN bookbrainz.${SQLViewName}_revision AS parent ON parent.id = revision_parent.parent_id AND parent.bbid = entity.bbid
+					LEFT JOIN bookbrainz.${SQLViewName}_data AS parent_data ON parent_data.id = parent.data_id
+					LEFT JOIN bookbrainz.alias_set as parent_alias_set ON parent_data.alias_set_id = parent_alias_set.id
+					LEFT JOIN bookbrainz.alias ON alias.id in (entity.default_alias_id, parent_alias_set.default_alias_id)
 					WHERE entity.master = true
 					ORDER BY revision.created_at DESC
 					LIMIT ${numRevisionsOnHomepage};`)
@@ -119,11 +120,6 @@ router.get('/', async (req, res, next) => {
 					correctedEntity.defaultAlias = {name: correctedEntity.defaultAliasName};
 					correctedEntity.defaultAliasName = null;
 					delete correctedEntity.defaultAliasName;
-				}
-				if (correctedEntity.parentAliasName) {
-					correctedEntity.parentAlias = {name: correctedEntity.parentAliasName};
-					correctedEntity.parentAliasName = null;
-					delete correctedEntity.parentAliasName;
 				}
 				return correctedEntity;
 			})),

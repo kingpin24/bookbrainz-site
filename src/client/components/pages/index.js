@@ -223,13 +223,23 @@ class IndexPage extends React.Component {
 							<Col md={12}>
 								<h2 className="text-center">Recent Activity</h2>
 								<ListGroup>
-									{recent.map((entity) => (
+									{recent.map((entity, index) => (
 										<ListGroupItem
 											href={`/revision/${entity.revisionId}`}
-											key={entity.revisionId}
+											key={`${entity.revisionId}-${entity.dataId}`}
 										>
 											<Row>
-												<Col md={2}>{`r${entity.revisionId}`}</Col>
+												<Col md={2}>
+													{entity.isMerge &&
+														<FontAwesomeIcon
+															flip="vertical" icon="code-branch"
+															style={{margin: '0 0.5em'}} title="Merge revision"
+														/>
+													}
+													<span title={`Revision ${entity.revisionId}`}>
+														#{entity.revisionId}
+													</span>
+												</Col>
 												<Col md={6}>
 													{genEntityIconHTMLElement(entity.type)}
 													{getEntityLabel(entity)}
