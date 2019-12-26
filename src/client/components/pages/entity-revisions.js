@@ -19,7 +19,7 @@
 
 import * as bootstrap from 'react-bootstrap';
 import * as utilsHelper from '../../helpers/utils';
-import FontAwesome from 'react-fontawesome';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -92,8 +92,8 @@ class EntityRevisions extends React.Component {
 				{revision.isMerge ?
 					<small style={{marginLeft: '0.5em'}}>
 						–
-						<FontAwesome
-							flip="vertical" name="code-branch"
+						<FontAwesomeIcon
+							flip="vertical" icon="code-branch"
 							style={{margin: '0 0.5em'}} title="Merge revision"
 						/>
 						Merge
