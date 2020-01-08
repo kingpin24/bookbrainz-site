@@ -207,6 +207,9 @@ router.get('/:id', async (req, res, next) => {
 					'author', 'author.titleUnlock.title', 'notes', 'notes.author',
 					'notes.author.titleUnlock.title'
 				]
+			})
+			.catch(Revision.NotFoundError, () => {
+				throw new error.NotFoundError(`Revision #${req.params.id} not found`, req);
 			});
 
 		const authorDiffs = await _createRevision(AuthorRevision);

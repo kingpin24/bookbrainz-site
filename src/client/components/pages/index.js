@@ -223,29 +223,35 @@ class IndexPage extends React.Component {
 							<Col md={12}>
 								<h2 className="text-center">Recent Activity</h2>
 								<ListGroup>
-									{recent.map((entity, index) => (
+									{recent.map((entityRevision) => (
 										<ListGroupItem
-											href={`/revision/${entity.revisionId}`}
-											key={`${entity.revisionId}-${entity.dataId}`}
+											href={`/revision/${entityRevision.revisionId}`}
+											key={`${entityRevision.revisionId}-${entityRevision.dataId}`}
 										>
 											<Row>
 												<Col md={2}>
-													{entity.isMerge &&
-														<FontAwesomeIcon
-															flip="vertical" icon="code-branch"
-															style={{margin: '0 0.5em'}} title="Merge revision"
-														/>
-													}
-													<span title={`Revision ${entity.revisionId}`}>
-														#{entity.revisionId}
+													<span title={`Revision ${entityRevision.revisionId}`}>
+														#{entityRevision.revisionId}
 													</span>
+													{entityRevision.isMerge &&
+														<span
+															className="round-color-icon"
+															style={{marginLeft: '0.5em'}}
+															title="Merge revision"
+														>
+															<FontAwesomeIcon
+																flip="vertical" icon="code-branch"
+																transform="shrink-4"
+															/>
+														</span>
+													}
 												</Col>
 												<Col md={6}>
-													{genEntityIconHTMLElement(entity.type)}
-													{getEntityLabel(entity)}
+													{genEntityIconHTMLElement(entityRevision.type)}
+													{getEntityLabel(entityRevision)}
 												</Col>
 												<Col md={4}>
-													{formatDate(new Date(entity.createdAt))}
+													{formatDate(new Date(entityRevision.createdAt))}
 												</Col>
 											</Row>
 										</ListGroupItem>

@@ -120,6 +120,7 @@ router.get('/', async (req, res, next) => {
 					correctedEntity.defaultAlias = {name: correctedEntity.defaultAliasName};
 					correctedEntity.defaultAliasName = null;
 					delete correctedEntity.defaultAliasName;
+					delete correctedEntity.parentAliasName;
 				}
 				return correctedEntity;
 			})),
