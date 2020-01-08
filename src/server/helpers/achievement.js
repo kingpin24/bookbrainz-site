@@ -35,7 +35,7 @@ import log from 'log';
  */
 function awardUnlock(UnlockType, awardAttribs) {
 	return new UnlockType(awardAttribs)
-		.fetch()
+		.fetch({require: false})
 		.then((award) => {
 			let unlockPromise;
 			if (award === null) {
@@ -63,7 +63,7 @@ function awardUnlock(UnlockType, awardAttribs) {
 function awardAchievement(orm, editorId, achievementName) {
 	const {AchievementType, AchievementUnlock} = orm;
 	return new AchievementType({name: achievementName})
-		.fetch()
+		.fetch({require: false})
 		.then((achievementTier) => {
 			let awardPromise;
 			if (achievementTier === null) {
@@ -105,7 +105,7 @@ function awardTitle(orm, editorId, tier) {
 	let titlePromise;
 	if (tier.titleName) {
 		titlePromise = new TitleType({title: tier.titleName})
-			.fetch()
+			.fetch({require: false})
 			.then((title) => {
 				let awardPromise;
 				if (title === null) {
@@ -152,13 +152,15 @@ function awardTitle(orm, editorId, tier) {
  */
 function awardListToAwardObject(awardList) {
 	const track = {};
-	awardList.forEach((awardSet) => {
-		awardSet.forEach((award) => {
-			Object.keys(award).forEach((key) => {
-				track[key] = award[key];
+	if (awardList) {
+		awardList.forEach((awardSet) => {
+			awardSet.forEach((award) => {
+				Object.keys(award).forEach((key) => {
+					track[key] = award[key];
+				});
 			});
 		});
-	});
+	}
 	return track;
 }
 
@@ -240,7 +242,7 @@ function getTypeCreation(revisionType, revisionString, editor) {
 function processRevisionist(orm, editorId) {
 	const {Editor} = orm;
 	return new Editor({id: editorId})
-		.fetch()
+		.fetch({require: false})
 		.then((editor) => {
 			const revisions = editor.get('revisionsApplied');
 			const tiers = [
