@@ -35,6 +35,7 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import _ from 'lodash';
 import express from 'express';
+import log from 'log';
 import target from '../templates/target';
 
 
@@ -45,10 +46,10 @@ router.get('/', async (req, res, next) => {
 	const {orm} = req.app.locals;
 	const numRevisionsOnHomepage = 9;
 
-	function render(entities) {
+	function render(recent) {
 		const props = generateProps(req, res, {
 			homepage: true,
-			recent: _.take(entities, numRevisionsOnHomepage),
+			recent,
 			requireJS: Boolean(res.locals.user)
 		});
 
@@ -86,11 +87,11 @@ router.get('/', async (req, res, next) => {
 		// eslint-disable-next-line guard-for-in
 		for (const modelName in entityModels) {
 			const SQLViewName = _.snakeCase(modelName);
-			// Hand-crafted artisanal SQL query to get parent revision's default alias for deleted entities
 			queryPromises.push(
 				orm.bookshelf.knex.raw(`
 					SELECT
 						entity.type,
+						entity.bbid,
 						entity.data_id,
 						alias.name AS default_alias_name,
 						revision.id AS revision_id,
@@ -98,11 +99,7 @@ router.get('/', async (req, res, next) => {
 						revision.is_merge AS is_merge
 					FROM bookbrainz.${SQLViewName} AS entity
 					JOIN bookbrainz.revision ON revision.id = entity.revision_id
-					LEFT JOIN bookbrainz.revision_parent ON revision_parent.child_id = entity.revision_id
-					RIGHT JOIN bookbrainz.${SQLViewName}_revision AS parent ON parent.id = revision_parent.parent_id AND parent.bbid = entity.bbid
-					LEFT JOIN bookbrainz.${SQLViewName}_data AS parent_data ON parent_data.id = parent.data_id
-					LEFT JOIN bookbrainz.alias_set as parent_alias_set ON parent_data.alias_set_id = parent_alias_set.id
-					LEFT JOIN bookbrainz.alias ON alias.id in (entity.default_alias_id, parent_alias_set.default_alias_id)
+					LEFT JOIN bookbrainz.alias ON alias.id = entity.default_alias_id
 					WHERE entity.master = true
 					ORDER BY revision.created_at DESC
 					LIMIT ${numRevisionsOnHomepage};`)
@@ -116,22 +113,33 @@ router.get('/', async (req, res, next) => {
 				// Step 1: Use camelCase instead of snake_case
 				const correctedEntity = _.mapKeys(entity, (val, key) => _.camelCase(key));
 				// Step 2: Restructure aliases
-				if (correctedEntity.defaultAliasName) {
-					correctedEntity.defaultAlias = {name: correctedEntity.defaultAliasName};
-					correctedEntity.defaultAliasName = null;
-					delete correctedEntity.defaultAliasName;
-					delete correctedEntity.parentAliasName;
-				}
+				correctedEntity.defaultAlias = {name: correctedEntity.defaultAliasName};
+				correctedEntity.defaultAliasName = null;
+				delete correctedEntity.defaultAliasName;
 				return correctedEntity;
 			})),
 			[]
 		);
 
+		/* Take only the number of revisions we want to show on the homepage */
 		const orderedEntities = _.orderBy(
 			latestEntities, 'createdAt',
 			['desc']
 		);
-		return render(orderedEntities);
+		const latestEntitiesSubset = _.take(orderedEntities, numRevisionsOnHomepage);
+
+		/* Get merged or deleted entities' last know alias */
+		await Promise.all(latestEntitiesSubset.map(async (entityRevision) => {
+			if (entityRevision.dataId === null) {
+				const parentAlias = await orm.func.entity.getEntityParentAlias(
+					orm, entityRevision.type, entityRevision.bbid
+				);
+				entityRevision.defaultAlias.name = parentAlias.name;
+			}
+			return null;
+		})).catch(err => { log.debug(err); });
+
+		return render(latestEntitiesSubset);
 	}
 	catch (err) {
 		return next(err);
